@@ -1,0 +1,19 @@
+@import "../../styles/variables";
+
+.divided {
+  display: flex;
+  align-items: center;
+
+  .divider {
+    flex-grow: 1;
+    border-bottom: 1px solid $divider-color;
+    margin: 5px;
+  }
+
+  .text {
+    padding: 0 1rem;
+    color: $divide-content-color;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+  }
+}
