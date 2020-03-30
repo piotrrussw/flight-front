@@ -20,10 +20,34 @@ function Router() {
       <PublicRoute exact path="/" component={Home} />
       <PublicRoute exact path="/login" component={Login} />
       <PublicRoute exact path="/sign-up" component={Register} />
-      <PrivateRoute exact path="/profile" component={Profile} />
-      <PrivateRoute exact path="/flights" component={Flights} />
-      <PrivateRoute exact path="/airports" component={Airports} />
-      <PrivateRoute exact path="/favorites" component={Favorites} />
+      <PrivateRoute
+        exact
+        path="/profile"
+        component={Profile}
+        title="Profile information"
+        value="profile"
+      />
+      <PrivateRoute
+        exact
+        path="/flights"
+        component={Flights}
+        title="Explore flights"
+        value="flights"
+      />
+      <PrivateRoute
+        exact
+        path="/airports"
+        component={Airports}
+        title="Explore airports"
+        value="airports"
+      />
+      <PrivateRoute
+        exact
+        path="/favorites"
+        component={Favorites}
+        title="Favorites"
+        value="favorites"
+      />
       <Redirect from="*" to={redirectUrl} />
     </Switch>
   );

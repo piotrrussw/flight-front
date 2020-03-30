@@ -10,6 +10,23 @@ const overrides = {
       height: '50px',
     },
   },
+  MuiBottomNavigation: {
+    root: {
+      padding: '4px 0',
+      backgroundColor: palette.primary.main,
+    },
+  },
+  MuiBottomNavigationAction: {
+    root: {
+      overflow: 'hidden',
+      padding: '0',
+      color: '#B180F6',
+      '&$selected': {
+        color: '#fff',
+        paddingTop: '0',
+      },
+    },
+  },
 };
 
 const themeName = 'Flight theme';
