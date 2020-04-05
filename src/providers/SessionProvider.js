@@ -5,7 +5,6 @@ const initialState = {
     title: 'Explore flights',
     value: 'flights',
   },
-  user: null,
 };
 
 const SessionContext = createContext(initialState);

@@ -11,7 +11,9 @@ function Avatar() {
 
   return (
     <Box className="avatar">
-      <img src={src} alt="avatar" />
+      <a href="/profile">
+        <img src={src} alt="avatar" />
+      </a>
     </Box>
   );
 }

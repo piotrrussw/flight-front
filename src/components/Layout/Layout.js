@@ -4,19 +4,33 @@ import { Box } from '@material-ui/core';
 import useAuthContext from 'hooks/useAuthContext';
 import TopBar from 'components/TopBar';
 import NavigationBar from 'components/NavigationBar';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+    justifyContent: 'space-between',
+  },
+
+  contentBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    padding: '1rem 2rem',
+    maxHeight: 'calc(100% - 134px)',
+  },
+});
 
 function Layout({ children }) {
   const { authenticated } = useAuthContext();
+  const classes = useStyles();
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      height="100vh"
-      justifyContent="space-between"
-    >
+    <Box className={classes.root}>
       {authenticated && <TopBar />}
-      <Box display="flex" height={1} p={2} pl={4} pr={4}>{children}</Box>
+      <Box className={classes.contentBox}>{children}</Box>
       {authenticated && <NavigationBar />}
     </Box>
   );

@@ -16,7 +16,7 @@ function PrivateRoute({
     }
   };
 
-  useEffect(updatePageInfo, []);
+  useEffect(updatePageInfo, [authenticated]);
 
   return (
     <Route

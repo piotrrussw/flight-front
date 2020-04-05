@@ -27,6 +27,13 @@ const overrides = {
       },
     },
   },
+  MuiTab: {
+    root: {
+      '&$selected': {
+        backgroundColor: 'rgba(98, 0, 238, 0.12)',
+      },
+    },
+  },
 };
 
 const themeName = 'Flight theme';

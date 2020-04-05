@@ -20,6 +20,7 @@ function Router() {
       <PublicRoute exact path="/" component={Home} />
       <PublicRoute exact path="/login" component={Login} />
       <PublicRoute exact path="/sign-up" component={Register} />
+
       <PrivateRoute
         exact
         path="/profile"
