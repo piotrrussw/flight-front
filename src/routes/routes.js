@@ -49,6 +49,7 @@ function Router() {
         title="Favorites"
         value="favorites"
       />
+
       <Redirect from="*" to={redirectUrl} />
     </Switch>
   );

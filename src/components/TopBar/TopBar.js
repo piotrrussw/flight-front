@@ -1,8 +1,8 @@
-import React from 'react';
-import { AppBar, Box } from '@material-ui/core';
-import useSessionContext from 'hooks/useSessionContext';
-import { ArrowBack } from '@material-ui/icons';
-import Avatar from 'components/Common/Avatar';
+import React from "react";
+import { AppBar, Box } from "@material-ui/core";
+import useSessionContext from "hooks/useSessionContext";
+import { ArrowBack } from "@material-ui/icons";
+import Avatar from "components/Common/Avatar";
 
 function TopBar() {
   const { sessionData } = useSessionContext();
@@ -22,7 +22,7 @@ function TopBar() {
             {pageTitle}
           </Box>
         </Box>
-        <Box>
+        <Box width="2rem" height="2rem">
           <Avatar />
         </Box>
       </Box>

@@ -4,7 +4,7 @@ const initialState = {
   activePage: {
     title: 'Explore flights',
     value: 'flights',
-  },
+  }
 };
 
 const SessionContext = createContext(initialState);

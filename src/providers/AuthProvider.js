@@ -5,7 +5,9 @@ import authManager from 'api/authManager';
 
 const initialAuth = {
   authenticated: true,
-  user: null,
+  user: {
+    username: 'piotrrussw'
+  },
 };
 
 const AuthContext = createContext(null);
