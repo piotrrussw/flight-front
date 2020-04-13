@@ -35,7 +35,7 @@ const useStyles = makeStyles({
   },
 });
 
-function AirportCard({ item, deletable }) {
+function AirportCard({ item, deletable, onDeleted }) {
   const [airport, setAirport] = useState(item);
   const {
     state: { token },
@@ -51,7 +51,11 @@ function AirportCard({ item, deletable }) {
 
       const newAirport = data && data.airport ? data.airport : {};
 
-      setAirport({ ...airport, ...newAirport, favorite: !airport.favorite });
+      if (airport.favorite && typeof onDeleted === 'function') {
+        onDeleted(airport._id);
+      } else {
+        setAirport({ ...airport, ...newAirport, favorite: !airport.favorite });
+      }
     } catch (e) {
       setFavoriteAlert(true);
     }
@@ -110,6 +114,12 @@ function AirportCard({ item, deletable }) {
 AirportCard.propTypes = {
   item: propTypes.object.isRequired,
   deletable: propTypes.bool,
+  onDeleted: propTypes.func,
+};
+
+AirportCard.defaultProps = {
+  deletable: false,
+  onDeleted: undefined,
 };
 
 export default AirportCard;

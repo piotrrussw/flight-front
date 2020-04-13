@@ -200,12 +200,6 @@ function Login() {
                 required
               />
             </FormControl>
-
-            <Box mt={1}>
-              <Link component={RouterLink} to="/remind-password">
-                Forgot password?
-              </Link>
-            </Box>
           </ControlBox>
 
           <Box className={classes.errorBox}>{state.error}</Box>

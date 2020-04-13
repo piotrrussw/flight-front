@@ -38,7 +38,7 @@ const useListStyles = makeStyles({
 });
 
 function List({
-  component: Component, pending, items, deletable,
+  component: Component, pending, items, deletable, onDeleted,
 }) {
   const classes = useListStyles();
   return (
@@ -51,6 +51,7 @@ function List({
             key={item._id || index}
             item={item}
             deletable={deletable}
+            onDeleted={onDeleted}
           />
         ))
       )}
@@ -61,12 +62,14 @@ function List({
 List.propTypes = {
   items: propTypes.array.isRequired,
   pending: propTypes.bool.isRequired,
-  deletable: propTypes.bool,
   component: propTypes.func.isRequired,
+  deletable: propTypes.bool,
+  onDeleted: propTypes.func,
 };
 
 List.defaultProps = {
   deletable: false,
+  onDeleted: undefined,
 };
 
 export default List;

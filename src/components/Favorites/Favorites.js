@@ -6,6 +6,7 @@ import List from 'components/Common/List';
 import AirportCard from 'components/Airports/Card';
 import FlightCard from 'components/Flights/Card';
 import useAuthContext from 'hooks/useAuthContext';
+import EmptyResults from 'components/Favorites/EmptyResults';
 
 const initialState = {
   active: 'flights',
@@ -49,6 +50,26 @@ function reducer(state, action) {
         pending: false,
         error: true,
       };
+    case 'DELETE_AIRPORT': {
+      const airports = state.airports.filter(
+        ({ _id }) => _id !== action.payload.id,
+      );
+
+      return {
+        ...state,
+        airports,
+      };
+    }
+    case 'DELETE_FLIGHT': {
+      const flights = state.flights.filter(
+        ({ _id }) => _id !== action.payload.id,
+      );
+
+      return {
+        ...state,
+        flights,
+      };
+    }
     default:
       return state;
   }
@@ -94,11 +115,23 @@ function Favorites() {
     };
   };
 
+  const handleAirportDelete = (id) => {
+    dispatch({ type: 'DELETE_AIRPORT', payload: { id } });
+  };
+
+  const handleFlightDelete = (id) => {
+    dispatch({ type: 'DELETE_FLIGHT', payload: { id } });
+  };
+
   useEffect(updateList, [state.active]);
 
   const {
     active, flights, airports, pending,
   } = state;
+
+  const empty = !pending
+    && ((active === 'flights' && !flights.length)
+      || (active === 'airports' && !airports.length));
 
   return (
     <>
@@ -118,6 +151,7 @@ function Favorites() {
           items={flights}
           pending={pending}
           component={FlightCard}
+          onDeleted={handleFlightDelete}
           deletable
         />
       </TabPanel>
@@ -127,9 +161,12 @@ function Favorites() {
           items={airports}
           pending={pending}
           component={AirportCard}
+          onDeleted={handleAirportDelete}
           deletable
         />
       </TabPanel>
+
+      {empty && <EmptyResults type={active} />}
     </>
   );
 }

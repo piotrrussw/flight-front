@@ -106,10 +106,6 @@ function Home() {
             Sign in
           </Button>
         </Box>
-
-        <Box component="span" mt={3} mb={2} width={1} align="center">
-          <RouterLink to="/remind-password">Forgot password?</RouterLink>
-        </Box>
       </Box>
     </Box>
   );

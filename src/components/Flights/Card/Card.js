@@ -76,7 +76,7 @@ const useStyles = makeStyles({
   },
 });
 
-function FlightCard({ item, deletable }) {
+function FlightCard({ item, deletable, onDeleted }) {
   const {
     state: { token },
   } = useAuthContext();
@@ -94,7 +94,11 @@ function FlightCard({ item, deletable }) {
 
       const newFlight = data && data.flight ? data.flight : {};
 
-      setFlight({ ...flight, ...newFlight, favorite: !flight.favorite });
+      if (flight.favorite && typeof onDeleted === 'function') {
+        onDeleted(flight._id);
+      } else {
+        setFlight({ ...flight, ...newFlight, favorite: !flight.favorite });
+      }
     } catch (e) {
       setFavoriteAlert(true);
     }
@@ -166,10 +170,12 @@ function FlightCard({ item, deletable }) {
 FlightCard.propTypes = {
   item: propTypes.object.isRequired,
   deletable: propTypes.bool,
+  onDeleted: propTypes.func,
 };
 
 FlightCard.defaultProps = {
   deletable: false,
+  onDeleted: undefined,
 };
 
 export default FlightCard;

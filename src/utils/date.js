@@ -3,7 +3,7 @@ export const getIsoToday = () => {
   const mm = now.getMonth() + 1;
   const dd = now.getDate();
 
-  // return '2020-12-01';
+  return '2020-12-01';
   return [
     now.getFullYear(),
     (mm > 9 ? '' : '0') + mm,

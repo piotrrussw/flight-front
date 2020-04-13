@@ -169,9 +169,13 @@ function Flights() {
           }}
         >
           <option aria-label="None" value="" />
-          {places.map(({ _id, placeId }) => (
+          {places.map(({ _id, placeId, name }) => (
             <option key={`origin-${_id}`} value={placeId}>
+              {name}
+              {' '}
+              (
               {placeId}
+              )
             </option>
           ))}
         </Select>
@@ -189,9 +193,13 @@ function Flights() {
           }}
         >
           <option aria-label="None" value="" />
-          {places.map(({ _id, placeId }) => (
+          {places.map(({ _id, placeId, name }) => (
             <option key={`destination-${_id}`} value={placeId}>
+              {name}
+              {' '}
+              (
               {placeId}
+              )
             </option>
           ))}
         </Select>
