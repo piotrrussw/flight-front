@@ -4,28 +4,40 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
+  makeStyles,
 } from '@material-ui/core';
 import propTypes from 'prop-types';
 import ImageUpload from 'components/Common/ImageUpload';
+import useAuthContext from 'hooks/useAuthContext';
+
+const useStyles = makeStyles({
+  dialogContent: {
+    minWidth: '16rem',
+    minHeight: '10rem',
+  },
+});
 
 function ChangeAvatarDialog({ open, handleClose }) {
+  const classes = useStyles();
+  const { dispatch } = useAuthContext();
+  const handleOnLoaded = (avatarUrl) => {
+    dispatch({ type: 'UPDATE_AVATAR', payload: { avatarUrl } });
+    handleClose();
+  };
+
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="avatar-dialog-title"
-      aria-describedby="avatar-dialog-description"
     >
       <DialogTitle id="avatar-dialog-title">Upload avatar</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="avatar-dialog-description">
-          <ImageUpload />
-        </DialogContentText>
+      <DialogContent className={classes.dialogContent}>
+        <ImageUpload onLoaded={handleOnLoaded} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary" autoFocus>
+        <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
       </DialogActions>

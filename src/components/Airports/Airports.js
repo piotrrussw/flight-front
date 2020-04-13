@@ -10,6 +10,7 @@ import { SentimentVeryDissatisfied } from '@material-ui/icons';
 import List from 'components/Common/List';
 import AirportCard from 'components/Airports/Card';
 import api from 'api';
+import useAuthContext from 'hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -24,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   cityBox: {
+    marginTop: '2rem',
     textAlign: 'center',
   },
   sadIcon: {
@@ -70,48 +72,65 @@ function reducer(state, action) {
 
 function Airports() {
   const classes = useStyles();
+  const {
+    state: { token },
+  } = useAuthContext();
   const [state, dispatch] = useReducer(reducer, initialState);
   const handleChange = (event) => {
     dispatch({ type: 'SET_CITY', payload: { city: event.target.value } });
   };
 
   const fetchCapitals = () => {
+    let mounted = true;
     const type = 'FETCH_CAPITALS';
     const callApi = async () => {
       try {
-        const { data } = await api.get('/capitals');
+        const { data } = await api(token).get('/capitals');
 
-        dispatch({
-          type: `${type}_SUCCESS`,
-          payload: { capitals: data.capitals },
-        });
+        if (mounted) {
+          dispatch({
+            type: `${type}_SUCCESS`,
+            payload: { capitals: data.capitals },
+          });
+        }
       } catch (e) {
-        dispatch({ type: `${type}_FAILURE` });
+        if (mounted) dispatch({ type: `${type}_FAILURE` });
       }
     };
 
-    dispatch({ type });
-    callApi();
+    if (mounted) {
+      dispatch({ type });
+      callApi();
+    }
+
+    return () => {
+      mounted = false;
+    };
   };
 
   const fetchAirports = () => {
+    let mounted = true;
     const type = 'FETCH_AIRPORTS';
     const callApi = async () => {
       try {
         const params = { city: state.city };
-        const { data } = await api.get('/airports', { params });
+        const { data } = await api(token).get('/airports', { params });
         const airports = data ? data.airports || [] : [];
 
-        dispatch({ type: `${type}_SUCCESS`, payload: { airports } });
+        if (mounted) dispatch({ type: `${type}_SUCCESS`, payload: { airports } });
       } catch (e) {
-        dispatch({ type: `${type}_FAILURE` });
+        if (mounted) dispatch({ type: `${type}_FAILURE` });
       }
     };
 
-    if (state.city) {
+    if (state.city && mounted) {
       dispatch({ type });
       callApi(type);
     }
+
+    return () => {
+      mounted = false;
+    };
   };
 
   useEffect(fetchCapitals, []);
@@ -153,9 +172,7 @@ function Airports() {
       )}
 
       {!city && (
-        <Box className={classes.cityBox}>
-          <div>Choose city to display airports</div>
-        </Box>
+        <Box className={classes.cityBox}>Choose city to display airports</Box>
       )}
 
       <List items={airports} component={AirportCard} pending={pending} />

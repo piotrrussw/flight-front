@@ -5,6 +5,7 @@ import api from 'api';
 import List from 'components/Common/List';
 import AirportCard from 'components/Airports/Card';
 import FlightCard from 'components/Flights/Card';
+import useAuthContext from 'hooks/useAuthContext';
 
 const initialState = {
   active: 'flights',
@@ -55,6 +56,9 @@ function reducer(state, action) {
 
 function Favorites() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    state: { token },
+  } = useAuthContext();
   const handleTabChange = (event, active) => dispatch({ type: 'SET_ACTIVE', payload: { active } });
   const tabProps = (value) => ({
     id: `wrapped-tab-${value}`,
@@ -63,23 +67,31 @@ function Favorites() {
     value,
   });
 
-  const callApi = async (url, type) => {
+  const callApi = async (url, type, mounted) => {
     try {
-      const { data } = await api.get(url);
+      const { data } = await api(token).get(url);
       const payload = {};
       payload[state.active] = data[state.active];
 
-      dispatch({ type: `${type}_SUCCESS`, payload });
+      if (mounted) dispatch({ type: `${type}_SUCCESS`, payload });
     } catch (e) {
-      dispatch({ type: `${type}_FAILURE` });
+      if (mounted) dispatch({ type: `${type}_FAILURE` });
     }
   };
 
   const updateList = () => {
+    let mounted = true;
     const type = `FETCH_${state.active.toUpperCase()}`;
     const url = `/user/${state.active}`;
-    dispatch({ type });
-    callApi(url, type);
+
+    if (mounted) {
+      dispatch({ type });
+      callApi(url, type, mounted);
+    }
+
+    return () => {
+      mounted = false;
+    };
   };
 
   useEffect(updateList, [state.active]);

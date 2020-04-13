@@ -24,13 +24,15 @@ const useStyles = makeStyles({
 });
 
 function Layout({ children }) {
-  const { authenticated } = useAuthContext();
+  const { state } = useAuthContext();
+  const authenticated = state.token;
   const classes = useStyles();
+  const childrenClass = authenticated ? classes.contentBox : undefined;
 
   return (
     <Box className={classes.root}>
       {authenticated && <TopBar />}
-      <Box className={classes.contentBox}>{children}</Box>
+      <Box className={childrenClass}>{children}</Box>
       {authenticated && <NavigationBar />}
     </Box>
   );

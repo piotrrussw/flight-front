@@ -13,6 +13,7 @@ import FavoriteButton from 'components/Common/FavoriteButton';
 import propTypes from 'prop-types';
 import { LocalAirport } from '@material-ui/icons';
 import api from 'api';
+import useAuthContext from 'hooks/useAuthContext';
 
 const useStyles = makeStyles({
   root: {
@@ -36,14 +37,17 @@ const useStyles = makeStyles({
 
 function AirportCard({ item, deletable }) {
   const [airport, setAirport] = useState(item);
+  const {
+    state: { token },
+  } = useAuthContext();
   const [favoriteAlert, setFavoriteAlert] = useState(false);
   const classes = useStyles();
 
   const toggleFavorites = async () => {
     try {
       const { data } = airport.favorite
-        ? await api.delete(`/user/airport/${airport._id}`)
-        : await api.post('/airport/save', airport);
+        ? await api(token).delete(`/user/airport/${airport._id}`)
+        : await api(token).post('/airport/save', airport);
 
       const newAirport = data && data.airport ? data.airport : {};
 

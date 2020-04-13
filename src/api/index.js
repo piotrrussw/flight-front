@@ -1,12 +1,21 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
-const api = axios.create({
-  baseURL: 'http://localhost:5000',
+const baseURL = 'http://localhost:5000';
+const authCookie = 'access_token';
+const setAuthToken = (token) => Cookies.set(authCookie, token);
+const getAuthToken = () => Cookies.get(authCookie);
+const removeAuthToken = () => Cookies.remove(authCookie);
+
+const api = (token) => axios.create({
+  baseURL,
   timeout: 1000,
   headers: {
-    access_token:
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTg2MTU1MWFjMjk2MTgzYjg0OWJjNjgiLCJpYXQiOjE1ODU4NDU5NDV9.b5nw3BPcrFU0fMF_Qr2rGCUXOrgOeYdA-QppaVz8n0E',
+    [authCookie]: token,
   },
 });
 
 export default api;
+export {
+  baseURL, setAuthToken, getAuthToken, removeAuthToken,
+};

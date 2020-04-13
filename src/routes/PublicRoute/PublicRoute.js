@@ -4,16 +4,12 @@ import propTypes from 'prop-types';
 import React from 'react';
 
 function PublicRoute({ component: Component, ...props }) {
-  const { authenticated } = useAuthContext();
+  const { state } = useAuthContext();
 
   return (
     <Route
       {...props}
-      render={(renderProps) => (!authenticated ? (
-        <Component {...renderProps} />
-      ) : (
-        <Redirect to="/flights" />
-      ))}
+      render={(renderProps) => (!state.token ? <Component {...renderProps} /> : <Redirect to="/flights" />)}
     />
   );
 }

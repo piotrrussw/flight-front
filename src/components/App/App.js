@@ -9,17 +9,17 @@ import { ThemeProvider } from '@material-ui/core';
 
 function App() {
   return (
-    <AuthProvider>
-      <SessionProvider>
-        <BrowserRouter>
-          <ThemeProvider theme={flightAppTheme}>
+    <ThemeProvider theme={flightAppTheme}>
+      <AuthProvider>
+        <SessionProvider>
+          <BrowserRouter>
             <Layout>
               <Router />
             </Layout>
-          </ThemeProvider>
-        </BrowserRouter>
-      </SessionProvider>
-    </AuthProvider>
+          </BrowserRouter>
+        </SessionProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

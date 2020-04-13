@@ -18,6 +18,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import propTypes from 'prop-types';
 import api from 'api';
 import { Alert } from '@material-ui/lab';
+import useAuthContext from 'hooks/useAuthContext';
 
 const useStyles = makeStyles({
   root: {
@@ -76,6 +77,9 @@ const useStyles = makeStyles({
 });
 
 function FlightCard({ item, deletable }) {
+  const {
+    state: { token },
+  } = useAuthContext();
   const [flight, setFlight] = useState(item);
   const [favoriteAlert, setFavoriteAlert] = useState(false);
   const classes = useStyles();
@@ -85,8 +89,9 @@ function FlightCard({ item, deletable }) {
   const toggleFavorites = async () => {
     try {
       const { data } = flight.favorite
-        ? await api.delete(`/user/flight/${flight._id}`)
-        : await api.post('/flight/save', flight);
+        ? await api(token).delete(`/user/flight/${flight._id}`)
+        : await api(token).post('/flight/save', flight);
+
       const newFlight = data && data.flight ? data.flight : {};
 
       setFlight({ ...flight, ...newFlight, favorite: !flight.favorite });

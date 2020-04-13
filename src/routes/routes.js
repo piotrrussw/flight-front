@@ -12,8 +12,8 @@ import Airports from 'components/Airports';
 import Favorites from 'components/Favorites';
 
 function Router() {
-  const { authenticated } = useAuthContext();
-  const redirectUrl = authenticated ? '/flights' : '/';
+  const { state } = useAuthContext();
+  const redirectUrl = state.token ? '/flights' : '/';
 
   return (
     <Switch>

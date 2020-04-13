@@ -1,34 +1,61 @@
-import React, {
-  createContext, useEffect, useMemo, useState,
-} from 'react';
-import authManager from 'api/authManager';
+import React, { createContext, useEffect, useReducer } from 'react';
+import api, { getAuthToken, removeAuthToken } from 'api';
 
-const initialAuth = {
-  authenticated: true,
-  user: {
-    username: 'piotrrussw'
-  },
+const initialState = {
+  token: null,
+  user: null,
 };
+
+function init() {
+  return { ...initialState, token: getAuthToken() };
+}
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'LOGIN':
+      return {
+        ...state,
+        user: action.payload.user,
+        token: action.payload.token,
+      };
+    case 'LOGOUT': {
+      return initialState;
+    }
+    case 'SET_USER':
+      return { ...state, user: action.payload.user };
+    case 'UPDATE_AVATAR': {
+      const user = { ...state.user, avatarUrl: action.payload.avatarUrl };
+      return { ...state, user };
+    }
+    default:
+      return state;
+  }
+}
 
 const AuthContext = createContext(null);
 
 const AuthProvider = (props) => {
-  const [auth, setAuth] = useState(initialAuth);
+  const [state, dispatch] = useReducer(reducer, initialState, init);
+  const getUserData = async () => {
+    if (state.token) {
+      try {
+        const { data } = await api(state.token).get('/account');
 
-  useEffect(() => {
-    const authData = authManager.getAuthData();
-
-    if (authData) {
-      setAuth(authData);
+        dispatch({ type: 'SET_USER', payload: { user: data.user } });
+      } catch (e) {
+        removeAuthToken();
+        dispatch({ type: 'LOGOUT' });
+        window.location = '/';
+      }
     }
-  }, []);
+  };
+  const onMount = () => {
+    getUserData();
+  };
 
-  const onLogout = () => setAuth(initialAuth);
-  const onLogin = (newAuth) => setAuth(newAuth);
+  useEffect(onMount, []);
 
-  const authValue = useMemo(() => ({ ...auth, onLogin, onLogout }), [auth]);
-
-  return <AuthContext.Provider value={authValue} {...props} />;
+  return <AuthContext.Provider value={{ state, dispatch }} {...props} />;
 };
 
 export { AuthContext };

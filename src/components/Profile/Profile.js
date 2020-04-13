@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Box,
   makeStyles,
@@ -12,13 +13,15 @@ import Avatar from 'components/Common/Avatar';
 import useAuthContext from 'hooks/useAuthContext';
 import DeleteAccountDialog from 'components/Profile/DeleteAccountDialog';
 import ChangeAvatarDialog from 'components/Profile/ChangeAvatarDialog';
+import api, { removeAuthToken } from 'api';
+import DeleteAvatarDialog from 'components/Profile/DeleteAvatarDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    margin: '3rem 0',
+    margin: '3rem 0 1.5rem 0',
     height: '100%',
   },
   avatarBox: {
@@ -41,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '100%',
     height: '100%',
+    maxWidth: '30rem',
   },
   logoutItem: {
     color: theme.palette.error.main,
@@ -49,25 +53,43 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.error.main,
     textAlign: 'center',
   },
+  deleteAvatarItem: {
+    color: theme.palette.error.main,
+  },
 }));
 
 function Profile() {
   const [avatarDialogVisible, setAvatarDialogVisible] = useState(false);
+  const [avatarDeleteDialogVisible, setAvatarDeleteDialogVisible] = useState(
+    false,
+  );
   const [deleteAccountDialogVisible, setDeleteAccountDialogVisible] = useState(
     false,
   );
   const classes = useStyles();
-  const { user } = useAuthContext();
+  const history = useHistory();
+  const {
+    state: { user, token },
+    dispatch,
+  } = useAuthContext();
 
   const logOut = () => {
-    // TODO: logout user
+    api(token)
+      .get('/logout')
+      .finally(() => {
+        removeAuthToken();
+        dispatch({ type: 'LOGOUT' });
+        history.push('/');
+      });
   };
+
+  const hasAvatar = user && user.avatarUrl;
 
   return (
     <>
       <Box className={classes.root}>
         <Box className={classes.avatarBox}>
-          <Avatar />
+          <Avatar src={user && user.avatarUrl} />
           <Typography component="h5" className={classes.username} gutterBottom>
             {user && user.username}
           </Typography>
@@ -79,9 +101,24 @@ function Profile() {
             aria-label="secondary mailbox folders"
           >
             <ListItem button onClick={() => setAvatarDialogVisible(true)}>
-              <ListItemText primary="Change avatar" />
+              <ListItemText
+                primary={hasAvatar ? 'Change avatar' : 'Upload avatar'}
+              />
             </ListItem>
             <Divider />
+
+            {hasAvatar && (
+              <>
+                <ListItem
+                  className={classes.deleteAvatarItem}
+                  button
+                  onClick={() => setAvatarDeleteDialogVisible(true)}
+                >
+                  <ListItemText primary="Delete avatar" />
+                </ListItem>
+                <Divider />
+              </>
+            )}
 
             <ListItem className={classes.logoutItem} button onClick={logOut}>
               <ListItemText primary="Log out" />
@@ -108,6 +145,11 @@ function Profile() {
       <ChangeAvatarDialog
         handleClose={() => setAvatarDialogVisible(false)}
         open={avatarDialogVisible}
+      />
+
+      <DeleteAvatarDialog
+        handleClose={() => setAvatarDeleteDialogVisible(false)}
+        open={avatarDeleteDialogVisible}
       />
     </>
   );

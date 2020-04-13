@@ -1,29 +1,40 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
-import useSessionContext from 'hooks/useSessionContext';
+import propTypes from 'prop-types';
 import placeholder from 'assets/images/avatar-placeholder.png';
+import { baseURL } from 'api';
 
 const useStyles = makeStyles({
   image: {
     maxHeight: 'calc(100% - 0.25rem)',
     maxWidth: 'calc(100% - 0.25rem)',
+    width: '100%',
+    height: '100%',
     borderRadius: '50%',
     border: '0.125rem solid',
     borderColor: '#6200ee',
   },
 });
 
-function Avatar() {
-  const { sessionData } = useSessionContext();
+function Avatar({ src, redirect }) {
   const classes = useStyles();
-  const { user } = sessionData;
-  const src = (user && user.avatarUrl) || placeholder;
+  const avatarSrc = src ? `${baseURL}/${src}` : placeholder;
 
   return (
-    <a href="/profile">
-      <img className={classes.image} src={src} alt="avatar" />
-    </a>
+    <RouterLink to={redirect ? '/profile' : '#'}>
+      <img className={classes.image} src={avatarSrc} alt="avatar" />
+    </RouterLink>
   );
 }
+
+Avatar.propTypes = {
+  src: propTypes.string,
+  redirect: propTypes.bool,
+};
+
+Avatar.defaultProps = {
+  redirect: true,
+};
 
 export default Avatar;

@@ -1,5 +1,5 @@
 import useAuthContext from 'hooks/useAuthContext';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, useLocation } from 'react-router-dom';
 import propTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import useSessionContext from 'hooks/useSessionContext';
@@ -7,25 +7,22 @@ import useSessionContext from 'hooks/useSessionContext';
 function PrivateRoute({
   component: Component, title, value, ...props
 }) {
-  const { authenticated } = useAuthContext();
+  const location = useLocation();
+  const { state } = useAuthContext();
   const { sessionData, setSessionData } = useSessionContext();
   const updatePageInfo = () => {
-    if (authenticated) {
+    if (state.token) {
       const activePage = { title, value };
       setSessionData({ ...sessionData, activePage });
     }
   };
 
-  useEffect(updatePageInfo, [authenticated]);
+  useEffect(updatePageInfo, [location]);
 
   return (
     <Route
       {...props}
-      render={(renderProps) => (authenticated ? (
-        <Component {...renderProps} />
-      ) : (
-        <Redirect to="/login" />
-      ))}
+      render={(renderProps) => (state.token ? <Component {...renderProps} /> : <Redirect to="/login" />)}
     />
   );
 }

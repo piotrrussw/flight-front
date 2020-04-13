@@ -11,6 +11,7 @@ import List from 'components/Common/List';
 import FlightCard from 'components/Flights/Card';
 import api from 'api';
 import { getIsoToday } from 'utils/date';
+import useAuthContext from 'hooks/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
   },
   originBox: {
+    marginTop: '2rem',
     textAlign: 'center',
   },
   sadIcon: {
@@ -77,6 +79,9 @@ function reducer(state, action) {
 
 function Flights() {
   const classes = useStyles();
+  const {
+    state: { token },
+  } = useAuthContext();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleOriginChange = (event) => {
@@ -91,42 +96,54 @@ function Flights() {
   };
 
   const fetchPlaces = () => {
+    let mounted = true;
     const type = 'FETCH_PLACES';
     const callApi = async () => {
       try {
-        const { data } = await api.get('/places');
+        const { data } = await api(token).get('/places');
 
-        dispatch({
-          type: `${type}_SUCCESS`,
-          payload: { places: data.places },
-        });
+        if (mounted) {
+          dispatch({
+            type: `${type}_SUCCESS`,
+            payload: { places: data.places },
+          });
+        }
       } catch (e) {
-        dispatch({ type: `${type}_FAILURE` });
+        if (mounted) dispatch({ type: `${type}_FAILURE` });
       }
     };
 
     callApi();
+
+    return () => {
+      mounted = false;
+    };
   };
 
   const fetchFlights = () => {
+    let mounted = true;
     const type = 'FETCH_FLIGHTS';
     const callApi = async () => {
       try {
         const date = getIsoToday();
         const params = [state.destination, state.origin, date].join('/');
-        const { data } = await api.get(`/flights?query=${params}`);
+        const { data } = await api(token).get(`/flights?query=${params}`);
         const flights = data ? data.flights || [] : [];
 
-        dispatch({ type: `${type}_SUCCESS`, payload: { flights } });
+        if (mounted) dispatch({ type: `${type}_SUCCESS`, payload: { flights } });
       } catch (e) {
-        dispatch({ type: `${type}_FAILURE` });
+        if (mounted) dispatch({ type: `${type}_FAILURE` });
       }
     };
 
-    if (state.destination && state.origin) {
+    if (state.destination && state.origin && mounted) {
       dispatch({ type });
       callApi();
     }
+
+    return () => {
+      mounted = false;
+    };
   };
 
   useEffect(fetchPlaces, []);
@@ -190,7 +207,7 @@ function Flights() {
 
       {!validParams && (
         <Box className={classes.originBox}>
-          <div>Choose origin and destination place to display flights</div>
+          Choose origin and destination place to display flights
         </Box>
       )}
 
