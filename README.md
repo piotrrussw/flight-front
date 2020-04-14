@@ -17,7 +17,10 @@ npm start
 ```
 
 ## Used API
-* [FlightAPI](https://github.com/piotrrussw/flight-api) API
+[FlightAPI](https://github.com/piotrrussw/flight-api) API
+
+## Project
+[LINK](https://xd.adobe.com/view/aa03ef8e-d5f9-470c-55bf-d0260b49d036-dc32/grid)
 
 ## Technologies
 * React
