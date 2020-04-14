@@ -10,10 +10,12 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    height: '100%',
     justifyContent: 'space-between',
   },
-
+  homeBox: {
+    height: '100%',
+  },
   contentBox: {
     display: 'flex',
     flexDirection: 'column',
@@ -27,7 +29,7 @@ function Layout({ children }) {
   const { state } = useAuthContext();
   const authenticated = state.token;
   const classes = useStyles();
-  const childrenClass = authenticated ? classes.contentBox : undefined;
+  const childrenClass = authenticated ? classes.contentBox : classes.homeBox;
 
   return (
     <Box className={classes.root}>
